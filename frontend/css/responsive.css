@@ -1,0 +1,21 @@
+/* Penyesuaian layar */
+@media (min-width: 900px) {
+  .landing { flex-direction: row; }
+  .hero { flex: 0 0 46%; border-radius: 0 40px 40px 0; display: flex; align-items: center; min-height: 100vh; position: sticky; top: 0; align-self: flex-start; }
+  .hero-t { font-size: 60px; }
+  .main-col { padding: 48px 40px; max-width: 720px; }
+  .hero-cta { flex-direction: row; max-width: none; justify-content: center; }
+}
+@media (max-width: 899px) {
+  .stats { grid-template-columns: repeat(2, 1fr); }
+  .filters { grid-template-columns: 1fr; }
+  .thead { display: none; }
+  .trow { grid-template-columns: 1fr auto; grid-template-areas: "id st" "nm nm" "ps jm" "by tt"; row-gap: 8px; }
+  .c-id { grid-area: id; } .c-st { grid-area: st; } .c-nm { grid-area: nm; } .c-ps { grid-area: ps; }
+  .c-jm { grid-area: jm; text-align: right; } .c-by { grid-area: by; } .c-tt { grid-area: tt; text-align: right; }
+}
+@media (max-width: 420px) {
+  .how { grid-template-columns: 1fr; }
+  .row2 { grid-template-columns: 1fr; }
+  .hero-t { font-size: 40px; }
+}

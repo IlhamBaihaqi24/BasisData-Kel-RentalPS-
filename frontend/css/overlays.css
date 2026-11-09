@@ -1,0 +1,50 @@
+/* Modal dan toast */
+
+.modal {
+  position: fixed;
+  inset: 0;
+  background: var(--overlay);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  z-index: 50;
+}
+.modal[hidden] {
+  display: none !important;
+}
+.sheet {
+  background: var(--surface);
+  color: var(--ink);
+  border-radius: 32px;
+  padding: 22px;
+  width: 100%;
+  max-width: 500px;
+  max-height: 90vh;
+  max-height: 90dvh;
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.sheet-h {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: calc(100px + env(safe-area-inset-bottom, 0px));
+  transform: translateX(-50%);
+  background: var(--ink);
+  color: var(--bg);
+  padding: 12px 20px;
+  border-radius: 24px;
+  font-weight: 700;
+  z-index: 80;
+  max-width: calc(100% - 32px);
+  box-shadow: var(--shadow);
+  text-align: center;
+}

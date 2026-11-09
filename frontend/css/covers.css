@@ -1,0 +1,37 @@
+/* Sampul game (tampilan saja) */
+
+.cover {
+  aspect-ratio: 3/4;
+  border-radius: 22px;
+  overflow: hidden;
+  box-shadow: var(--shadow);
+  max-width: 100%;
+  position: relative;
+  background: var(--soft);
+}
+.cover img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.game-strip {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+  max-width: 560px;
+}
+.gs {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+}
+.gs figcaption {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 13px;
+  overflow-wrap: anywhere;
+}

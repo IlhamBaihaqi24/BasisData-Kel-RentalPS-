@@ -1,0 +1,21 @@
+{
+  "name": "titiktemu-backend",
+  "version": "1.0.0",
+  "description": "REST API TitikTemu - booking rental PlayStation (customer) dan riwayat (admin)",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js",
+    "test": "node --test tests/api.test.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.6",
+    "express": "^5.3.0"
+  },
+  "engines": {
+    "node": ">=22.13"
+  }
+}

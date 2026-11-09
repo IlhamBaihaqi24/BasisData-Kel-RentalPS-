@@ -1,0 +1,20 @@
+/* Struk dan layar sukses */
+.receipt, .receipt-mini { display: flex; flex-direction: column; gap: 10px; }
+.receipt { background: var(--surface); border-radius: 28px; padding: 22px; border: 1px solid var(--line); }
+.r { display: flex; justify-content: space-between; align-items: center; gap: 16px; }
+.r span:first-child { color: var(--muted); }
+.r b { text-align: right; overflow-wrap: anywhere; }
+.rc-h { display: flex; align-items: center; gap: 10px; }
+.rc-h b { font-family: var(--font-display); font-size: 22px; flex: 1; }
+.dash { border-top: 2px dashed var(--line); margin: 2px 0; }
+.total { display: flex; justify-content: space-between; align-items: center; background: var(--warn-bg); color: var(--warn-fg); border-radius: 18px; padding: 12px 16px; }
+.total b:last-child { font-size: 22px; font-family: var(--font-display); }
+.success { text-align: center; display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 8px 0 18px; }
+.ck { width: 72px; height: 72px; border-radius: 50%; background: var(--mint); color: #241a52; display: flex; align-items: center; justify-content: center; }
+.ck .i { width: 34px; height: 34px; }
+.offline .card { text-align: center; display: flex; flex-direction: column; gap: 10px; margin-top: 12vh; }
+.off-ic { width: 72px; height: 72px; border-radius: 50%; background: var(--coral); color: #241a52; display: flex; align-items: center; justify-content: center; margin: 0 auto; }
+.off-ic .i { width: 34px; height: 34px; }
+
+.ck.ck-wait { background: var(--sun, #ffc94d); }
+.ck.ck-bad { background: #ffe3da; color: #a3381c; }

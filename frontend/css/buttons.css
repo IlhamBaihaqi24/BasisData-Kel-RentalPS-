@@ -1,0 +1,68 @@
+/* Tombol */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 48px;
+  padding: 0 24px;
+  border-radius: 26px;
+  font-weight: 700;
+  font-size: 15px;
+  text-align: center;
+  transition:
+    transform 0.12s,
+    filter 0.12s;
+}
+.btn:active {
+  transform: scale(0.97);
+}
+.btn:hover {
+  filter: brightness(1.06);
+}
+.btn-primary {
+  background: var(--accent);
+  color: var(--on-accent);
+}
+.btn-coral {
+  background: var(--coral);
+  color: var(--on-coral);
+  font-weight: 800;
+}
+.btn-ghost {
+  border: 2px solid var(--accent);
+  color: var(--accent-ink);
+  background: transparent;
+}
+.btn-soft {
+  background: var(--soft);
+  color: var(--accent-ink);
+}
+.btn-danger {
+  background: var(--busy-bg);
+  color: var(--busy-fg);
+}
+.btn-sm {
+  min-height: 44px;
+  padding: 0 16px;
+  font-size: 14px;
+}
+.btn[disabled],
+.btn[aria-disabled="true"] {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+.btn-block {
+  width: 100%;
+}
+.iconbtn {
+  width: 44px;
+  height: 44px;
+  border-radius: 22px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--surface);
+  border: 1px solid var(--line);
+}
