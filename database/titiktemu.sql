@@ -1,0 +1,148 @@
+-- =====================================================================
+-- TitikTemu: database MySQL / MariaDB (XAMPP + phpMyAdmin)
+-- Cara pakai: phpMyAdmin > tab "Import" > pilih berkas ini > Import.
+-- Hasilnya database "titiktemu" berisi 7 tabel + data contoh.
+-- (Tidak wajib: backend juga membuat database ini sendiri saat pertama dijalankan.)
+-- Akun contoh: admin / 123456 (pegawai), 0812-3456-7890 / 123456 (customer)
+-- =====================================================================
+CREATE DATABASE IF NOT EXISTS titiktemu CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+USE titiktemu;
+SET NAMES utf8mb4;
+SET FOREIGN_KEY_CHECKS = 0;
+DROP TABLE IF EXISTS pembayaran, penyewaan, ruangan, unit_ps, pelanggan, pegawai, pengaturan, urutan;
+SET FOREIGN_KEY_CHECKS = 1;
+
+CREATE TABLE pegawai (
+  id_pegawai VARCHAR(10) NOT NULL PRIMARY KEY,
+  username   VARCHAR(50) NOT NULL UNIQUE,
+  password   VARCHAR(255) NOT NULL COMMENT 'hash scrypt, bukan teks biasa',
+  nama       VARCHAR(100) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE pelanggan (
+  id_pelanggan VARCHAR(10) NOT NULL PRIMARY KEY,
+  nama         VARCHAR(100) NOT NULL,
+  no_hp        VARCHAR(20) NOT NULL UNIQUE,
+  alamat       VARCHAR(200) NOT NULL DEFAULT '',
+  password     VARCHAR(255) NOT NULL DEFAULT '' COMMENT 'hash scrypt'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE unit_ps (
+  id_unit VARCHAR(10) NOT NULL PRIMARY KEY,
+  jenis   ENUM('PS5','PS4') NOT NULL,
+  nomor   INT NOT NULL,
+  kondisi VARCHAR(30) NOT NULL DEFAULT 'baik',
+  UNIQUE KEY uq_unit (jenis, nomor)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE ruangan (
+  id_ruangan     VARCHAR(10) NOT NULL PRIMARY KEY,
+  nama           VARCHAR(50) NOT NULL UNIQUE,
+  tipe           ENUM('VVIP','VIP','Reguler') NOT NULL,
+  kapasitas      INT NOT NULL,
+  tarif_tambahan INT NOT NULL DEFAULT 0,
+  fasilitas      VARCHAR(200) NOT NULL DEFAULT ''
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE penyewaan (
+  id_sewa      VARCHAR(10) NOT NULL PRIMARY KEY,
+  id_pelanggan VARCHAR(10) NOT NULL,
+  id_unit      VARCHAR(10) NOT NULL,
+  id_ruangan   VARCHAR(10) NOT NULL,
+  nama_ruangan VARCHAR(50) NOT NULL DEFAULT '',
+  mulai        BIGINT NOT NULL COMMENT 'waktu mulai, milidetik sejak 1970',
+  durasi       INT NOT NULL COMMENT 'jam',
+  total        INT NOT NULL,
+  CONSTRAINT fk_sewa_pelanggan FOREIGN KEY (id_pelanggan) REFERENCES pelanggan (id_pelanggan),
+  CONSTRAINT fk_sewa_unit      FOREIGN KEY (id_unit)      REFERENCES unit_ps (id_unit),
+  CONSTRAINT fk_sewa_ruangan   FOREIGN KEY (id_ruangan)   REFERENCES ruangan (id_ruangan)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE pembayaran (
+  id_bayar   VARCHAR(10) NOT NULL PRIMARY KEY,
+  id_sewa    VARCHAR(10) NOT NULL UNIQUE,
+  tanggal    BIGINT NOT NULL,
+  metode     ENUM('Tunai','Transfer','QRIS') NOT NULL,
+  jumlah     INT NOT NULL,
+  status     ENUM('Menunggu','Verifikasi','Lunas','Ditolak') NOT NULL,
+  bukti      VARCHAR(100) NOT NULL DEFAULT '',
+  alasan     VARCHAR(200) NOT NULL DEFAULT '',
+  bukti_tipe VARCHAR(30) NOT NULL DEFAULT '',
+  bukti_data MEDIUMBLOB NULL COMMENT 'foto bukti bayar disimpan di database',
+  CONSTRAINT fk_bayar_sewa FOREIGN KEY (id_sewa) REFERENCES penyewaan (id_sewa)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE pengaturan (kunci VARCHAR(50) NOT NULL PRIMARY KEY, nilai TEXT NOT NULL) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+CREATE TABLE urutan (nama VARCHAR(30) NOT NULL PRIMARY KEY, nilai INT NOT NULL) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- Aturan di tingkat database: Transfer/QRIS tidak boleh disimpan tanpa foto bukti
+DELIMITER $$
+CREATE TRIGGER bukti_wajib BEFORE INSERT ON pembayaran FOR EACH ROW
+BEGIN
+  IF NEW.metode <> 'Tunai' AND (NEW.bukti_data IS NULL OR LENGTH(NEW.bukti_data) = 0) THEN
+    SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Bukti pembayaran wajib untuk Transfer/QRIS';
+  END IF;
+END$$
+DELIMITER ;
+
+-- ---------------- Data contoh ----------------
+INSERT INTO pegawai (id_pegawai, username, password, nama) VALUES
+  ('PG-01', 'kasir.dinda', 'f437821ed4c085f3a4ef4a594bbb9cb5:c70255a49c6a1e6b69e5e5902d28b76ec4d6781a8f4f0da6727e5a81769c5ed8', 'Dinda'),
+  ('PG-02', 'admin', 'c10562b95850b73a61f2e813f6dcc984:3b948867fe8dcc017fbb7297e4e925f6e54bb7f9a429e578d72caa0b8c29185b', 'Admin');
+
+INSERT INTO pelanggan (id_pelanggan, nama, no_hp, alamat, password) VALUES
+  ('PL-001', 'Rizky Pratama', '0812-3456-7890', 'Jakarta Selatan', '8d1000d8a3830d0799e358b45a4796ef:be12abe5c4bd7a9f18bdd58b7cb69420887fc3581bcb380027aa80032f8b70bd'),
+  ('PL-002', 'Salsa Amelia', '0857-2211-9034', 'Depok', '777f3963271424c9713f9ffb0b5f1197:97237a209cbc8dc7638323cbbe969d98a8520047d2f5cc134c03ff883dea3b30'),
+  ('PL-003', 'Bimo Aditya', '0813-9087-6612', 'Jakarta Selatan', '12469ba6be6ab0fec8c8ed817ac6fd8e:a2a84a610e077da0f8a26a0840e03d4495195af641e8638ac61fb4a413e259d8'),
+  ('PL-004', 'Nadia Putri', '0896-4410-2275', 'Bekasi', '19f80b1788d181c003f804f3f5226da0:5e18fe25377e22342cb700b57cd924cbc567b45686d330532f7cf0a11f6bc5c2'),
+  ('PL-005', 'Fajar Ramadhan', '0821-7765-3308', 'Jakarta Selatan', '989fdb3cfb36d4441230d048e0ec90fc:24f33fa3cf69b436db11f00f6125dedccdbd210230e3d4ececef2b444fa3b42d'),
+  ('PL-006', 'Citra Maharani', '0878-5521-4096', 'Tangerang Selatan', '5580d5267ed80a4b5085740b5663dbca:21ddeb5c261c5ebbe944a8b7cd8db07603e3f134cc7ba895efe91cb9d7d9b1f4');
+
+INSERT INTO unit_ps (id_unit, jenis, nomor, kondisi) VALUES
+  ('U-01', 'PS5', 1, 'baik'),
+  ('U-02', 'PS5', 2, 'baik'),
+  ('U-03', 'PS5', 3, 'baik'),
+  ('U-04', 'PS4', 4, 'baik'),
+  ('U-05', 'PS4', 5, 'rusak ringan'),
+  ('U-06', 'PS4', 6, 'baik'),
+  ('U-07', 'PS4', 7, 'baik'),
+  ('U-08', 'PS4', 8, 'baik');
+
+INSERT INTO ruangan (id_ruangan, nama, tipe, kapasitas, tarif_tambahan, fasilitas) VALUES
+  ('R-01', 'VVIP Room 1', 'VVIP', 8, 30000, 'TV 65 inci, AC, sofa, kulkas mini'),
+  ('R-02', 'VVIP Room 2', 'VVIP', 8, 30000, 'TV 65 inci, AC, sofa, kulkas mini'),
+  ('R-03', 'VIP Room 1', 'VIP', 6, 15000, 'TV 55 inci, AC, sofa'),
+  ('R-04', 'VIP Room 2', 'VIP', 6, 15000, 'TV 55 inci, AC, sofa'),
+  ('R-05', 'VIP Room 3', 'VIP', 6, 15000, 'TV 55 inci, AC, sofa'),
+  ('R-06', 'Reguler 1', 'Reguler', 4, 0, 'TV 43 inci, kipas angin'),
+  ('R-07', 'Reguler 2', 'Reguler', 4, 0, 'TV 43 inci, kipas angin');
+
+INSERT INTO pengaturan (kunci, nilai) VALUES
+  ('tarif', '{"PS5":12000,"PS4":8000}');
+
+-- Waktu sewa contoh dihitung dari saat berkas ini di-import (milidetik sejak 1970)
+SET @sekarang = UNIX_TIMESTAMP() * 1000;
+SET @foto = UNHEX('89504e470d0a1a0a0000000d49484452000000c0000000c00802000000ddbefb5000000f3a49444154789cec9d7b7054d51dc77ff7de7d66370981840408497824bc42141f80160b82305a441199b13a766c6b55503b753a6d2dda87335a6bfda754ab75ac8e5375d06aab162b29a0168787164521bcdfaf843c2009d9ec66b3cfdb13b246926c1ef79e73f7feeee6f7990d247b6fb2e7fecef7fcceefbc6d0f2e090041e8c50604c1010988e082044470410222b82001115c9080082e484004172420820b1210c1050988e082044470410222b82001115c9080082e484004172420820b1210c1050988e04206dca82afbea78757c73e1db6fde4c27d4c443753d96aa265ec8c1e88198d524f69f74e11b29f1a674f1bf12a41b52b707848b9eb1d3081d4252313e382201a917cc972872172c958642d14ea71112250a1266c263181c025213ea49988674d30709e37c5dd3612860260b2851c7632a5216404ab8eaaebade444c1390aa523dc54557a5263187645e093441408978b0f307520f1f897abfb352334346260888a21cf10c290f44a4132420828b54f4445fd4874ca40a3545164f8507eaea09235247aaa222aac250e390dba765eeaec8da99efacf528018fe2772aa19648b63f96793e9cb3a7b56267cb65fe5836988744fb03e1a4c059b328aff2ca9ccf06bcf3b07f5265fd92c36d93c10cc803a123d751bf387fede5d9db256950614ca9f7207b3119adad5b76223801528b511e48a5a8471763dd27ee297e2ec7de0cda89c46daf9efed14edf15bd2f19971dc6b4c254528f1ea678773f34fe697dea61d8e5e80f8b5e98376263ef4b1dd9614cabcc1801917cb4539271f4be923f3be43070c006166f1dfdf785b995c9ae8111609f91384418666bbaaff859458a81086e2c788739334809a20544fd85dab14be11525cf786d7e10842ca93f287a71a4a32ec935d1192452402a45ceba58985739c65d0d42712bc1e5a3df487241123ccf5aa48068668f0e98fb999bfb2118c064efde22f7f1deef8bcd266102a2ba4b1fdf1afe498612040360425990bb21e9258199254c40e47df43135730f18c694cc3d8a14edfdbec0cc122420f23fba70c9c152cf01300c160995f5f5f7056599200191ffd1c5d4cc2a9b2ca6e9de1715595f25bf2028cb040888bc8f6e0adda7c1600a5da7fabc2622e7040ca692f7d18d5b36247ceef611b6be3f4244ced168bc9964d95bc0603294363012de2a8cea2f1ea2713b188c0d22fd5ce5cf3ef24066e28b1a3e99b02932028c84cf03d1b40d3e7c11c305d4bf46f9a77990073293eaf6b16030467f049707a20088934381c9c1981b8ca4ca3763803bf82a112e01d1e8292731d5b6bfb51c0ca325927da26d3c18098780c8ff886097ef52308cdd1d7f7c10a59c232bf50b4825f723822f5b661d0d4c040308c65cffaa5b3e983b795c817e0149e48104f141dd5230808d0d8bdbe3c606584073a23170b86df296c6b92094d3c1a28fce2d1cecdd1c95090908056f9fb9fd48a01404d11acdfcebc907e283efa3312506a23e4481b0cc7ef9e44a96f1c04d4c55d89f6ad6d201cd93931c41341022f1c7b29e3afcdb6301aeb5c9acddbefae82f8eb69541aaa0663c227cd161cf1cfff9e7e767812e6a82854f1ff9b59ee5f11c0d22da9d0323e599bb9616fc23df553bc8fbdba29ef567bff349e302d633093ae0588f4502c2cb55399b67e76c1def39d2cf3df5a1821de7676e3ab72018f78019a4a180dc1ec8c9933c5e5c417ec0af369f5583da8ded555a2ab277e63beabdb6568fe297a55820961988791b43c3f7b556d4874781a9a4c9687cc1586962b9525aae4c9826670fc7db3e3cdfa81ed91b3fb227767877aca1665091873f96bdad49702f9140aced8198b39973bdfdaa45b6bc51d6eb54a8af5637af8b7cba311a0e8175b1b080e62db1dd70bb23c30b96c6df026b5f0d33198135b1a4804acbe5dbee77e617a64f5766f5b1f89a67c3a78fc6c16a584c400e27dcb6d231737e7a4ea4fce8ddc87baf44c05258692c4cb1c18adf38d3553d8c05b7d8effea5032c85950474cf2a67e97405d29a4bafb6ddfea09534641901ddf3a873da9569ae9e4eae5e64bbf92ec3d78b89c21a02bafcdb4ac5ac21a19e4e162cb38d9d688dacb1402a6d765876b7c522034e2449faee4a6b3cb20504347fa93d2b67c84d3e2a2a95a75bc1e9621790cdc6043444573f2ebcd50291107601cd98a3783287e8dcc77193e55145d89f1dbb802a660fe9c5d7f81f1fbb80ca2a8650e3ab37a5e5d81f1fb5c047e44b5ac74af77f19ab7c3372e6649c054f8513e49bbee760d128589631e3b1271e75fa468ed196bc63fbe3cf3f163a7e201e0a42a0150eee8cfff1e1f6a6060b4fdef666754c59c10c6a01395d9a6e870d6ff71c898c4661d3fb260d4fc682e0ab82baf7a0690b841b402f39b9a8e368d45598d6531d1a6a924c87a8af4eb9078a87a0e60da87daf63bd5717591530ee01706a9e81eacd9630af8041ed81b4f61f0603490c1df0a5d6fae73f87aa9550fb4e37f5309837aa7a006ade04559b47cc2f449d47a8135732c982f12f1350f85cf24b6a14ce7d0caab69dc5911b0175e28acbacd6868fb642c3fafe6e08d541d356d0027223e01590cb0df963acd607ddba77e078c5a7ed2c41660497e19bb4e807af804a2659b00b7130e2f01f048d603605660159300072e40c7c8fa2b96307b329f036e38bcb2c28a08c7103dfe3d1bceb2566539007120aebec718de9f70e19f2168146c80369868d8279b37a46d0be6675d3fb5136ce150a260f54db92ad50aaab8effe991f6a4f77bb2a4c21279ee12bbb0e102c90e252be1c0affabc217f3178346fa9c94cc10cd2588fb13b11a9807a3bed861af5e99f0643da8f4762bf72644f9f0bf6766d8b6d5d1f7df439b72b03c4c09c50eefc8efe9ede3846c0d83b4117cc208df5c61e4da70fa4beb1a457e7c7bf5f0f878c395ceb7ca3fad1bb42c7cbc63f0433fe06a39681770ac82e701743de7530e529b8f4159075b6c84bb0f60659c6039d3864e0b2dfe30759e1163a7fd49e0363bf0fe2401b47634c96244171694abb1055f46bd29941701e2c81d103158e97155b4f6be58f919bcf1a1504983260d9120fbfd57cb42ad87828d432d2ee9eeacc599c5d54e14abebb2a3308330bc2dd17300a28a9bb9e7f8bedc04e430424c970edcd295dffc05a53eb7ca7fe726e8f2f9e88bd4e865bd9abb2f5d4e2aca215b9d3b2e5248bc29859484083a2249980a6cc501e5eeddab13956cb9af1edc91bb4c7f6c7e3bd34e674c3d809c91d0c6bc68f2e92af9c97eafda9f6b637fda121f969dc1ff84e2920ff6ce425bd2f31b36ca9046ca014501f433fcc8717f63b4778d59d6d7e5fcf370b0ae59f3ca9716aa39104d5d813f53bfab961adefc41c6fc1ec8cfc1eefe31c11431744770cc2a7d1ce51bdd916a83b1319e024e5b52d277abfc9cc8270581e9d802c3904a60516eb0c784f6d1f0a43681c7409b2e42c0e2dd445063ec8bd2e9afc1e84c6210f946a6679f207bc679a6b78d2f7111a075d103d6e729a0b68a273e0a3bea7ba92cf2b42681c5c09cac94b32089f6614dbbdd778fa5bdce395ed37641525bf9425311301267009c8927380b4b32a7f4681adcfd1ff47f22f1bd5f7556c26422620be31e78c641bc178f0b934e6635e2f5e70474ea9d2fd909ccbdcb96f145f37c753d0cfef621b96c7150371162f365ed650d3b32b1a67af924392578c987ad7f049fbdb9b0fb3b1309b7bb26b583f8ea70b6c1e089180d86873e178aecc9ebfd4be7b7b3701c90a5c7b13de7dbedc92c2bc0e7b0dfe57988998a154349313110968cc38d9e1e412d0c47279d533ee6d1b2255ff8bb14edbe9b36c572db4618b3a3961266286aa3e8665541591804a4474728c2e9196dfeb587e2fa431cc50780484a8422d1e1a4d307e50190a93072a1dd2bbd90d1e5486c2a26516b214a0df911409cc507886e5b108c8d23b19a61e3ce6c2928e62aabfb480c75c5862a0bcd1547f692017cd19b1580484f9a86584e0311716010dcba5184803c3469080ba8379132e84385d24a0ee045ad5e1238d324ad567b19ae3a9eeba65030e15b38d0a755b5bb00c86611190df188b3043af7936bc67bb39fb5a94cf54eef8b123335b7cc1f0a3111096c8a3e18c788b6cff38faf88aa059ea61b08f660960c900d1d457d3585877f6ed1099cd2d8df1e71f6b7f6d7538180073610960c9608961490271ecdd8165af202c023ab42b16898871429f6e8c3e7e7ffbfe2f112d23678961496209031104dbd4a3fbb03c9d3273d2a38080781c3c9932e7aa83e6b3f1979f0a6d5a1b8d89af34786149dabd3d766c5fac74baecf67045451ffe337ab88aaab05eac5b136ef3eb7442aa0a9bd7459fb8bffde02ed45bfdb0e4b144b2a4ea9e52d8d2a46e78cba4f3879281c503c185a3991a6ad4cbafd1dc306c6a505ffc5d684b6534867113c19eb044eefd22766877acac42d1e18a5e7a3274b616d16e9bfa05c4ca90f03db3eaabd56804265d32d8ee13350eacc27ae9f7a17375163b55aef9acbaf53f5187532a2993076fc6d75687aa3e13ef6279b292c303496044c7dfb17df160409d38555106f244e76ad5171e0fb1c8346e05c7d31b96ecfd5fc5d8ab6cba9231d0c9d46d7e78f3f9f0f68f8dd9622bf1a5eb771f5c62764b371999c3a41befb45fbd28b988ea4eabff5d1bd9b61e5fa8ac9739d7dbe6dd644fba022914ec68577eb026dc3ef0a60c7a51cd10901155580fdc1eb862aeadab27977d62d359f5f881180b95201d195d2c154d5472f2bed94ff37ca3fac527d170080c85272b39040460b07e8814c193951ccdf8f4f40243128eac447de82e811ffd02a2fa2b6de0c94a0e0f440a4a1b38b29226920e79f862593e01511c6d7d38f39082e8a10e6724c2e78124f241d6a623fbf814441e88e0825740d414b334fcd9471e88e04244339ee2206b2224df447820aac6ac89907c13d491484ec87208ca324131103921cb2128cb840d65e0d9b9981810819925ac1586f3506a222902334be4602af9204b20b6ae10d90f443ec81288ad2ba82391e08204447061cc84328a8610624ca618e381281a42883199425518c1050988e082044470410222b8a0653d698a9aa2a63079a034454a515398044470410222b8304140ea852f9e6dd5889ea889155ea9b7a80902ea944ec7a646ecb125521117ead79b4399351fcbb42aac5346927945c7eaa8892f937db9d931d005e9a8ead7bbac918e06032673a108a23bdd6f579122879494846890d5fb885a611717a944d5aed254eb8429a42e53202b5d489bf15dc682ae4d683bfdb6d4ad8f353de4d5354939d1bc502ffa46ea660a8458a01fa867c94bbb0aae4731e8fad112c5833a12092e484004172420820b1210c1050988e082044470410222b82001115c9080082e484004172420820b1210c1050988e082044470410222b82001115c9080082e48400417ff070000ffff183c3baf0000000649444154030030304cef0e5b89bf0000000049454e44ae426082');
+
+INSERT INTO penyewaan (id_sewa, id_pelanggan, id_unit, id_ruangan, nama_ruangan, mulai, durasi, total) VALUES
+  ('SW-0001', 'PL-002', 'U-04', 'R-06', 'Reguler 1',   @sekarang - 52*3600000, 3,  24000),
+  ('SW-0002', 'PL-001', 'U-01', 'R-03', 'VIP Room 1',  @sekarang - 30*3600000, 2,  54000),
+  ('SW-0003', 'PL-005', 'U-03', 'R-07', 'Reguler 2',   @sekarang - 10*3600000, 1,  12000),
+  ('SW-0004', 'PL-004', 'U-06', 'R-04', 'VIP Room 2',  @sekarang -  8*3600000, 2,  46000),
+  ('SW-0005', 'PL-003', 'U-02', 'R-01', 'VVIP Room 1', @sekarang -  6*3600000, 3, 126000),
+  ('SW-0006', 'PL-002', 'U-04', 'R-06', 'Reguler 1',   @sekarang - 105*60000,  3,  24000),
+  ('SW-0007', 'PL-001', 'U-01', 'R-01', 'VVIP Room 1', @sekarang - 30*60000,   2,  84000),
+  ('SW-0008', 'PL-006', 'U-03', 'R-03', 'VIP Room 1',  @sekarang +  3*3600000, 2,  54000);
+
+INSERT INTO pembayaran (id_bayar, id_sewa, tanggal, metode, jumlah, status, bukti, bukti_tipe, bukti_data) VALUES
+  ('PB-0001', 'SW-0001', @sekarang - 52*3600000 - 1200000, 'QRIS',     24000, 'Lunas',    'SW-0001.png', 'image/png', @foto),
+  ('PB-0002', 'SW-0002', @sekarang - 30*3600000 - 1200000, 'Tunai',    54000, 'Menunggu', '', '', NULL),
+  ('PB-0003', 'SW-0003', @sekarang - 10*3600000 - 1200000, 'QRIS',     12000, 'Lunas',    'SW-0003.png', 'image/png', @foto),
+  ('PB-0004', 'SW-0004', @sekarang -  8*3600000 - 1200000, 'Tunai',    46000, 'Menunggu', '', '', NULL),
+  ('PB-0005', 'SW-0005', @sekarang -  6*3600000 - 1200000, 'Transfer', 126000, 'Lunas',    'SW-0005.png', 'image/png', @foto),
+  ('PB-0006', 'SW-0006', @sekarang - 105*60000 - 1200000,  'QRIS',     24000, 'Lunas',    'SW-0006.png', 'image/png', @foto),
+  ('PB-0007', 'SW-0007', @sekarang - 30*60000 - 1200000,   'Tunai',    84000, 'Menunggu', '', '', NULL),
+  ('PB-0008', 'SW-0008', @sekarang + 3*3600000 - 1200000,  'Transfer',  54000, 'Lunas',    'SW-0008.png', 'image/png', @foto);
+
+-- Penghitung ID berikutnya (supaya ID baru melanjutkan nomor contoh)
+INSERT INTO urutan (nama, nilai) VALUES ('pelanggan', 6), ('unit', 8), ('ruangan', 7), ('penyewaan', 8), ('pembayaran', 8);
