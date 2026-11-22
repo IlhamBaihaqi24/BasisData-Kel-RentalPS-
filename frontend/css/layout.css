@@ -1,0 +1,22 @@
+/* Kerangka halaman: pembungkus, header, lencana, toast */
+.wrap { width: 100%; margin: 0 auto; padding: 16px 16px 48px; }
+.wrap.narrow { max-width: 520px; }
+.wrap.wide { max-width: 1120px; padding-top: 20px; }
+.sp { margin-top: 18px; }
+.center { display: flex; justify-content: center; text-align: center; }
+.grow { flex: 1; min-width: 0; }
+.phead { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+.phead h1 { font-size: 26px; }
+.brand { display: inline-flex; align-items: center; gap: 10px; }
+.brand b { font-family: var(--font-display); font-size: 22px; }
+.brand b span, .rc-h b span { color: var(--accent-ink); }
+a.iconbtn { color: var(--ink); text-decoration: none; }
+.badge.b-muted { background: var(--surface2); color: var(--muted); }
+.card .center { margin-bottom: 4px; }
+.card h2 { margin-bottom: 2px; }
+.two { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.two .btn { width: 100%; }
+a.btn { text-decoration: none; }
+.toast { bottom: calc(28px + env(safe-area-inset-bottom, 0px)); }
+.steps { padding-left: 20px; margin: 14px 0 18px; display: flex; flex-direction: column; gap: 8px; text-align: left; }
+code { background: var(--soft); color: var(--accent-ink); padding: 2px 7px; border-radius: 8px; font-size: 13px; }

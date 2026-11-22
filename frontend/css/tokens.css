@@ -1,0 +1,77 @@
+/* Warna, font, bayangan. Mode terang dan gelap. */
+
+:root {
+  --bg: #f7f4ff;
+  --surface: #ffffff;
+  --surface2: #f2eeff;
+  --ink: #241a52;
+  --muted: #6b6590;
+  --line: #e6e0f8;
+  --accent: #6c4df5;
+  --on-accent: #ffffff;
+  --accent-ink: #4b2fd0;
+  --soft: #e9e3ff;
+  --coral: #ff7a59;
+  --on-coral: #241a52;
+  --sun: #ffc94d;
+  --mint: #3ddbb0;
+  --ok-bg: #d5f7ec;
+  --ok-fg: #0b6b50;
+  --busy-bg: #ffe3da;
+  --busy-fg: #a3381c;
+  --warn-bg: #fff0c2;
+  --warn-fg: #7a5600;
+  --hero: #6c4df5;
+  --side: #241a52;
+  --side-fg: #cfc7ee;
+  --overlay: rgba(36, 26, 82, 0.55);
+  --shadow: 0 10px 24px rgba(108, 77, 245, 0.14);
+  --font-display: "Bricolage Grotesque", "Trebuchet MS", sans-serif;
+  --font-body: "Plus Jakarta Sans", "Segoe UI", system-ui, sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #14102b;
+    --surface: #1f1a3e;
+    --surface2: #272150;
+    --ink: #f1eeff;
+    --muted: #a9a3cc;
+    --line: #352e62;
+    --accent: #a895ff;
+    --on-accent: #14102b;
+    --accent-ink: #c9beff;
+    --soft: #2e2660;
+    --ok-bg: #12382f;
+    --ok-fg: #6bebc4;
+    --busy-bg: #47201a;
+    --busy-fg: #ffa58b;
+    --warn-bg: #443407;
+    --warn-fg: #ffd76a;
+    --side: #0e0b20;
+    --overlay: rgba(5, 3, 20, 0.7);
+    --shadow: 0 10px 24px rgba(0, 0, 0, 0.35);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #14102b;
+  --surface: #1f1a3e;
+  --surface2: #272150;
+  --ink: #f1eeff;
+  --muted: #a9a3cc;
+  --line: #352e62;
+  --accent: #a895ff;
+  --on-accent: #14102b;
+  --accent-ink: #c9beff;
+  --soft: #2e2660;
+  --ok-bg: #12382f;
+  --ok-fg: #6bebc4;
+  --busy-bg: #47201a;
+  --busy-fg: #ffa58b;
+  --warn-bg: #443407;
+  --warn-fg: #ffd76a;
+  --side: #0e0b20;
+  --overlay: rgba(5, 3, 20, 0.7);
+  --shadow: 0 10px 24px rgba(0, 0, 0, 0.35);
+  color-scheme: dark;
+}

@@ -1,0 +1,73 @@
+/* Input, form, stepper */
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-weight: 600;
+  font-size: 13px;
+}
+.field input,
+.field select {
+  min-height: 52px;
+  border: 1.5px solid var(--line);
+  border-radius: 16px;
+  padding: 0 16px;
+  background: var(--surface);
+  font-size: 16px;
+  font-weight: 500;
+  width: 100%;
+}
+.field input:focus,
+.field select:focus {
+  border-color: var(--accent);
+  outline: 0;
+  box-shadow: 0 0 0 4px var(--soft);
+}
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.check {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 44px;
+  font-weight: 600;
+}
+.check input {
+  width: 22px;
+  height: 22px;
+  accent-color: var(--accent);
+}
+.stepper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--surface);
+  border: 1.5px solid var(--line);
+  border-radius: 28px;
+  padding: 6px;
+  gap: 8px;
+}
+.stepper button {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.stepper .m {
+  background: var(--soft);
+  color: var(--accent-ink);
+}
+.stepper .p {
+  background: var(--accent);
+  color: var(--on-accent);
+}
+.stepper b {
+  font-size: 18px;
+  font-variant-numeric: tabular-nums;
+}

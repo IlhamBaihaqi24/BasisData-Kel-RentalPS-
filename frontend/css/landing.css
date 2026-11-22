@@ -1,0 +1,24 @@
+/* Beranda customer */
+.landing { display: flex; flex-direction: column; min-height: 100vh; }
+.hero { background: var(--hero); color: #fff; padding: 36px 20px 40px; text-align: center; position: relative; overflow: hidden; border-radius: 0 0 36px 36px; }
+.hero::before { content: ""; position: absolute; width: 320px; height: 320px; border-radius: 50%; background: rgba(255, 255, 255, 0.12); top: -120px; right: -90px; }
+.hero::after { content: ""; position: absolute; width: 220px; height: 220px; border-radius: 50%; background: rgba(255, 122, 89, 0.28); bottom: -90px; left: -60px; }
+.hero-in { position: relative; z-index: 1; max-width: 520px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; gap: 10px; }
+.hero-t { font-size: 46px; color: #fff; }
+.hero-t span { color: var(--sun); }
+.hero-s { font-family: var(--font-display); font-size: 22px; font-weight: 800; }
+.hero-d { opacity: 0.9; max-width: 380px; }
+.hero-cta { display: flex; flex-direction: column; gap: 10px; width: 100%; max-width: 340px; margin-top: 12px; }
+.btn-light { background: rgba(255, 255, 255, 0.18); color: #fff; border: 2px solid rgba(255, 255, 255, 0.55); }
+.main-col { max-width: 640px; display: flex; flex-direction: column; gap: 12px; padding-top: 28px; }
+.main-col .game-strip { max-width: none; }
+.tarif { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.tcard { border-radius: 24px; padding: 18px; display: flex; flex-direction: column; gap: 2px; color: #241a52; }
+.tcard b { font-family: var(--font-display); font-size: 24px; }
+.c1 { background: #e9e3ff; } .c2 { background: #ffe3da; } .c3 { background: #fff0c2; } .c4 { background: #d5f7ec; }
+[data-theme="dark"] .c1, [data-theme="dark"] .c2, [data-theme="dark"] .c3, [data-theme="dark"] .c4 { color: #241a52; }
+.how { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.how li { display: flex; align-items: center; gap: 12px; background: var(--surface); border: 1px solid var(--line); border-radius: 20px; padding: 12px; }
+.how b { width: 34px; height: 34px; border-radius: 50%; background: var(--coral); color: #241a52; display: flex; align-items: center; justify-content: center; flex: none; }
+.foot { text-align: center; margin-top: 18px; }
+.foot a { color: var(--muted); font-size: 13px; }

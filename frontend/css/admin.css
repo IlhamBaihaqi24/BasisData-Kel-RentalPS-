@@ -1,0 +1,28 @@
+/* Admin: riwayat. Laptop = tabel, HP = kartu bertumpuk */
+.ahead { display: flex; align-items: center; gap: 10px; margin-bottom: 18px; }
+.stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin: 16px 0; }
+.stat { border-radius: 22px; padding: 16px; display: flex; flex-direction: column; gap: 2px; color: #241a52; }
+.stat b { font-family: var(--font-display); font-size: 26px; }
+.filters { display: grid; grid-template-columns: 1fr 200px; gap: 12px; align-items: end; margin-bottom: 12px; }
+.filters .field.dt input { min-height: 52px; }
+.table { margin-top: 14px; display: flex; flex-direction: column; gap: 8px; }
+.thead, .trow { display: grid; grid-template-columns: 1.1fr 1.5fr 1.4fr 1fr 0.9fr 1.1fr 1.1fr; gap: 12px; align-items: center; }
+.thead { padding: 0 16px; color: var(--muted); font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.4px; }
+.trow { text-align: left; width: 100%; background: var(--surface); border: 1px solid var(--line); border-radius: 20px; padding: 12px 16px; }
+.trow:hover { border-color: var(--accent); }
+.trow > span { display: flex; flex-direction: column; min-width: 0; overflow-wrap: anywhere; }
+.trow .c-st { align-items: flex-start; }
+
+/* Panel verifikasi pembayaran */
+.verif:not(:empty) { background: var(--warn-bg); border-radius: 24px; padding: 16px; margin: 4px 0 16px; color: var(--warn-fg); }
+.verif h2 { display: flex; align-items: center; gap: 8px; color: var(--warn-fg); }
+.verif .muted { color: var(--warn-fg); opacity: 0.85; }
+.vlist { display: flex; flex-direction: column; gap: 8px; margin-top: 12px; }
+.vcard { display: flex; align-items: center; gap: 12px; width: 100%; text-align: left; background: var(--surface); color: var(--ink); border: 1px solid var(--line); border-radius: 20px; padding: 12px 14px; }
+.vcard:hover { border-color: var(--accent); }
+.vcard .grow { display: flex; flex-direction: column; min-width: 0; }
+.vcard .vr { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; }
+.bukti { display: flex; flex-direction: column; gap: 6px; margin: 14px 0; }
+.bukti img { width: 100%; max-height: 55vh; object-fit: contain; border-radius: 16px; border: 1px solid var(--line); background: var(--surface2); }
+.sheet .field { margin: 12px 0; }
+@media (max-width: 640px) { .vcard { flex-wrap: wrap; } .vcard .btn { width: 100%; } }

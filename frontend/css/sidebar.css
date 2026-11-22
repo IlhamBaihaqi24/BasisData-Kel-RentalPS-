@@ -1,0 +1,52 @@
+/* Sidebar: riwayat pemesanan (customer) dan menu admin */
+.side { position: fixed; inset: 0; z-index: 60; display: flex; justify-content: flex-end; }
+.side[hidden] { display: none !important; }
+.side-back { position: absolute; inset: 0; background: var(--overlay); border: 0; }
+.side-panel { position: relative; width: min(380px, 92vw); height: 100%; background: var(--bg); color: var(--ink); display: flex; flex-direction: column; box-shadow: -12px 0 32px rgba(0,0,0,.25); animation: geser .2s ease-out; }
+@keyframes geser { from { transform: translateX(40px); opacity: 0; } to { transform: none; opacity: 1; } }
+.side-h { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 16px 16px 8px; }
+.side-h h2 { font-size: 22px; }
+.side-body { flex: 1; overflow: auto; padding: 8px 16px 16px; display: flex; flex-direction: column; gap: 10px; }
+.side-user { background: var(--soft); color: var(--accent-ink); border-radius: 18px; padding: 12px 14px; display: flex; flex-direction: column; }
+.side-user .muted { color: var(--accent-ink); opacity: .8; }
+.side-foot { padding: 12px 16px calc(12px + env(safe-area-inset-bottom, 0px)); border-top: 1px solid var(--line); display: flex; gap: 10px; }
+.side-foot .btn { flex: 1; }
+.cbar { display: inline-flex; align-items: center; gap: 8px; }
+.chip-user { border: 0; background: var(--accent); color: var(--on-accent); border-radius: 999px; padding: 8px 14px; font-weight: 700; max-width: 120px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.phead .cbar, .phead > .btn { margin-left: auto; }
+.topnav { position: absolute; top: 14px; right: 14px; z-index: 2; }
+.hero { position: relative; }
+.galat { color: var(--busy-fg); background: var(--busy-bg); border-radius: 14px; padding: 10px 14px; font-weight: 700; margin: 0; }
+.galat[hidden] { display: none; }
+button.link { background: none; border: 0; color: var(--accent-ink); font-weight: 700; text-decoration: underline; padding: 0; font: inherit; font-weight: 700; }
+
+/* Pilih jam: kisi jam buka + sisa PS/ruangan */
+.slots { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+.slot { display: flex; flex-direction: column; align-items: center; gap: 1px; padding: 8px 2px; background: var(--surface); border: 1.5px solid var(--line); border-radius: 16px; font-weight: 800; }
+.slot small { font-weight: 600; font-size: 11px; color: var(--muted); }
+.slot.sel { border-color: var(--accent); background: var(--soft); }
+.slot[disabled] { opacity: .45; cursor: not-allowed; }
+.slot.low small { color: var(--warn-fg); }
+@media (max-width: 420px) { .slots { grid-template-columns: repeat(3, 1fr); } }
+
+/* Admin: sidebar menu kiri */
+.adm { display: flex; min-height: 100vh; }
+.adm-side { width: 240px; flex: none; background: var(--side); color: var(--side-fg); padding: 20px 14px; display: flex; flex-direction: column; gap: 6px; position: sticky; top: 0; height: 100vh; align-self: flex-start; }
+.adm-side .brand b { color: #fff; }
+.adm-side .brand { margin: 0 6px 18px; }
+.adm-nav { display: flex; align-items: center; gap: 10px; width: 100%; text-align: left; background: transparent; border: 0; color: inherit; padding: 12px 14px; border-radius: 16px; font-weight: 700; }
+.adm-nav:hover { background: rgba(255,255,255,.08); }
+.adm-nav.on { background: var(--accent); color: var(--on-accent); }
+.adm-nav .badge { margin-left: auto; }
+.adm-side .spacer { flex: 1; }
+.adm-user { padding: 8px 14px; font-size: 13px; opacity: .8; }
+.adm-main { flex: 1; min-width: 0; }
+.adm-top { display: none; align-items: center; gap: 10px; padding: 12px 16px 0; }
+@media (max-width: 899px) {
+  .adm { flex-direction: column; }
+  .adm-side { position: fixed; z-index: 40; left: 0; top: 0; transform: translateX(-100%); transition: transform .2s; width: 260px; }
+  body.adm-open .adm-side { transform: none; box-shadow: 12px 0 32px rgba(0,0,0,.35); }
+  .adm-top { display: flex; }
+}
+.adm-back { display: none; }
+body.adm-open .adm-back { display: block; position: fixed; inset: 0; z-index: 39; background: var(--overlay); border: 0; }
