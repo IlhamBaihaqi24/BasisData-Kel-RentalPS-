@@ -120,12 +120,6 @@ Tujuh tabel: `pegawai`, `pelanggan`, `unit_ps`, `ruangan`, `penyewaan`, `pembaya
 | Desain UI/UX | [Figma](ISI-LINK-FIGMA) |
 | Dokumentasi API | [backend/API.md](./backend/API.md) |
 
-## Kontribusi
-
-- Cabang `main` hanya diubah lewat pull request, dengan minimal satu peninjau.
-- Nama cabang: `fitur/nama-fitur`, `perbaikan/nama-masalah`, atau `dokumen/nama-dokumen`.
-- Sebelum mulai bekerja jalankan `git pull`. Jangan commit `.env`, `node_modules`, atau berkas data database.
-- Pembagian tugas per anggota ada di [`LANGKAH.md`](./LANGKAH.md).
 
 ## Anggota Kelompok
 
